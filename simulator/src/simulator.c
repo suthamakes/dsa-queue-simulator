@@ -38,7 +38,7 @@ int main() {
     if (InitializeSDL() < 0) {
         return 1;
     }
-    window = CreateWindow("Hello World", 600, 600);
+    window = CreateWindow("Traffic Simulator", 600, 600);
     if (!window) {   
         return 1;
     }
