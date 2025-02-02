@@ -44,6 +44,31 @@ void DrawDashedLine(SDL_Renderer *renderer, int x1, int y1, int x2, int y2, int 
     }
 }
 
+void DrawTrafficLight(SDL_Renderer *renderer, int XPos, int YPos, int isGreen, char *orientation) {
+    
+    const int width = 30;
+    const int height = 90;
+
+    if (isGreen) {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    } else {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    }
+
+    SDL_Rect trafficLightRect;
+    
+    if (strcmp(orientation, "vertical") == 0) {
+        trafficLightRect = (SDL_Rect){XPos, YPos, width, height}; // Horizontal orientation
+    } else if (strcmp(orientation, "horizontal") == 0) {
+        trafficLightRect = (SDL_Rect){XPos, YPos, height, width}; // Vertical orientation
+    } else {
+        printf("Invalid orientation: %s\n", orientation);
+        return;
+    }
+    
+    SDL_RenderFillRect(renderer, &trafficLightRect);
+}
+
 void DrawBackground(SDL_Renderer *renderer) {
     // Set background color (green for grass)
     SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255);
@@ -75,6 +100,11 @@ void DrawBackground(SDL_Renderer *renderer) {
     DrawDashedLine(renderer, 250, 450, 250, 600, 10);
     DrawDashedLine(renderer, 350, 450, 350, 600, 10);
 
+    DrawTrafficLight(renderer, 175, 255, 0, "vertical");
+    DrawTrafficLight(renderer, 395, 255, 1, "vertical");
+    DrawTrafficLight(renderer, 255, 175, 0, "horizontal");
+    DrawTrafficLight(renderer, 255, 395, 1, "horizontal");
+
     SDL_RenderPresent(renderer);
-    // SDL_Delay(16); // Delay for ~60 FPS
+    SDL_Delay(16); // Delay for ~60 FPS
 }
