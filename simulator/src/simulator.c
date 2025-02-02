@@ -1,4 +1,5 @@
 #include "client.h"
+#include "renderer.h"
 
 typedef struct{
     int vehicle_id;
@@ -27,15 +28,46 @@ void receive_data(int sock) {
     }
 }
 
-int main() {
-    int sock = create_socket();
-    
-    connect_to_server(sock, "127.0.0.1");
+    static SDL_Window *window = NULL;
+    static SDL_Renderer *renderer = NULL;
 
-    receive_data(sock);
+int main() {
+    // Socket related code commented out during the development of UI elements
+    // int sock = create_socket();
+
+    if (InitializeSDL() < 0) {
+        return 1;
+    }
+    window = CreateWindow("Hello World", 600, 600);
+    if (!window) {   
+        return 1;
+    }
+    renderer = CreateRenderer(window);
+    if (!renderer) {
+        return 1;
+    }
+
+    // connect_to_server(sock, "127.0.0.1");
+
+    int running = 1;
+    SDL_Event event;
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN)) {
+                running = 0;
+            }
+        }
+        DrawBackground(renderer);
+    }
+
+    // receive_data(sock);
 
     // Close socket
-    close(sock);
+    // close(sock);
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
     
     return 0;
 }
