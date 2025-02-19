@@ -1,12 +1,6 @@
 #include "client.h"
 #include "renderer.h"
 
-typedef struct{
-    int vehicle_id;
-    char road_id;
-    int lane;
-} Vehicle;
-
 void receive_data(int sock) {
     Vehicle received_data;
 
@@ -38,7 +32,7 @@ int main() {
     if (InitializeSDL() < 0) {
         return 1;
     }
-    window = CreateWindow("Traffic Simulator", 600, 600);
+    window = CreateWindow("Traffic Simulator", SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!window) {   
         return 1;
     }
@@ -49,6 +43,8 @@ int main() {
 
     // connect_to_server(sock, "127.0.0.1");
 
+    
+
     int running = 1;
     SDL_Event event;
     while (running) {
@@ -58,6 +54,8 @@ int main() {
             }
         }
         DrawBackground(renderer);
+        TrafficLightState(renderer);
+
     }
 
     // receive_data(sock);
