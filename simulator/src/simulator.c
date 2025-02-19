@@ -7,9 +7,6 @@ typedef struct{
     int lane;
 } Vehicle;
 
-const int SCREEN_WIDTH = 600;
-const int SCREEN_HEIGHT = 600;
-
 void receive_data(int sock) {
     Vehicle received_data;
 

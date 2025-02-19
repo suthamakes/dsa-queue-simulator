@@ -1,5 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
+#define SCREEN_WIDTH 600
+#define SCREEN_HEIGHT 600
 
 #include <SDL2/SDL.h>
 

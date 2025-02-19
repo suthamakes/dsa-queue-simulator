@@ -69,25 +69,14 @@ void DrawTrafficLight(SDL_Renderer *renderer, int XPos, int YPos, int isGreen, c
     SDL_RenderFillRect(renderer, &trafficLightRect);
 }
 
-void DrawBackground(SDL_Renderer *renderer) {
-    // Set background color (green for grass)
-    SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255);
-    SDL_RenderClear(renderer);
+SDL_Color grassGreen = {34,139,34,255}; 
+SDL_Color roadGray = {50, 50, 50, 255};
+  
 
-    // Set road color (gray)
-    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-
-    // Horizontal road
-    SDL_Rect horizontalRoad = {0, 150, 600, 300}; 
-    SDL_RenderFillRect(renderer, &horizontalRoad);
-
-    // Vertical road
-    SDL_Rect verticalRoad = {150, 0, 300, 600}; 
-    SDL_RenderFillRect(renderer, &verticalRoad);
-
-    // Dashed lines for lane markings (yellow)
-    SDL_SetRenderDrawColor(renderer, 247, 233, 23, 255);
+void DrawLaneMarking(SDL_Renderer *renderer){
+    SDL_Color laneMarking = {247, 233, 23, 255};
     
+    SDL_SetRenderDrawColor(renderer, laneMarking.r, laneMarking.g, laneMarking.b, laneMarking.a);
     DrawDashedLine(renderer, 0, 250, 150, 250, 10);
     DrawDashedLine(renderer, 0, 350, 150, 350, 10);
 
@@ -99,6 +88,25 @@ void DrawBackground(SDL_Renderer *renderer) {
 
     DrawDashedLine(renderer, 250, 450, 250, 600, 10);
     DrawDashedLine(renderer, 350, 450, 350, 600, 10);
+}
+
+void DrawBackground(SDL_Renderer *renderer) {
+    // Set background color (green for grass)
+    SDL_SetRenderDrawColor(renderer, grassGreen.r, grassGreen.g, grassGreen.b, grassGreen.a);
+    SDL_RenderClear(renderer);
+
+    // Set road color (gray)
+    SDL_SetRenderDrawColor(renderer, roadGray.r, roadGray.g, roadGray.b, roadGray.a);
+
+    // Horizontal road
+    SDL_Rect horizontalRoad = {0, SCREEN_HEIGHT/4, SCREEN_WIDTH, SCREEN_HEIGHT/2}; 
+    SDL_RenderFillRect(renderer, &horizontalRoad);
+
+    // Vertical road
+    SDL_Rect verticalRoad = {SCREEN_WIDTH/4, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT}; 
+    SDL_RenderFillRect(renderer, &verticalRoad);
+    
+    DrawLaneMarking(renderer);
 
     DrawTrafficLight(renderer, 175, 255, 0, "vertical");
     DrawTrafficLight(renderer, 395, 255, 1, "vertical");
