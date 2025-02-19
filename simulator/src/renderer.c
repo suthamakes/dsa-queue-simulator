@@ -117,6 +117,4 @@ void TrafficLightState(SDL_Renderer *renderer){
     DrawTrafficLight(renderer, 395, 255, 1, "vertical");
     DrawTrafficLight(renderer, 255, 175, 0, "horizontal");
     DrawTrafficLight(renderer, 255, 395, 1, "horizontal");
-    SDL_RenderPresent(renderer);
-    SDL_Delay(16); // Delay for ~60 FPS
 }

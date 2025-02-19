@@ -25,6 +25,19 @@ void receive_data(int sock) {
     static SDL_Window *window = NULL;
     static SDL_Renderer *renderer = NULL;
 
+void moveVehicleD3toA1(Vehicle *vehicle) {
+    if (vehicle->rect.x < vehicle->targetX) {
+        vehicle->rect.x += vehicle->speed;  // Move right
+    } else if (vehicle->rect.y > vehicle->targetY) {
+        vehicle->rect.y -= vehicle->speed;  // Move up
+    }
+}
+
+void drawVehicle(SDL_Renderer *renderer, Vehicle *vehicle) {
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red vehicle
+    SDL_RenderFillRect(renderer, &vehicle->rect);
+}
+
 int main() {
     // Socket related code commented out during the development of UI elements
     // int sock = create_socket();
@@ -43,7 +56,15 @@ int main() {
 
     // connect_to_server(sock, "127.0.0.1");
 
-    
+    Vehicle vehicle1 = {
+    {50, 200, 30, 30},  // Start in D3 (X: 50, Y: 200, inside the range)
+    1,    // Vehicle ID
+    'D',  // Start from road 'D'
+    3,    // Lane 3
+    3,
+    200,  // Target X (Center of A1 range)
+    50    // Target Y (Center of A1 range)
+};
 
     int running = 1;
     SDL_Event event;
@@ -53,8 +74,13 @@ int main() {
                 running = 0;
             }
         }
+        moveVehicleD3toA1(&vehicle1); 
         DrawBackground(renderer);
         TrafficLightState(renderer);
+        drawVehicle(renderer, &vehicle1);
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(30);
 
     }
 
