@@ -7,6 +7,9 @@ typedef struct{
     int lane;
 } Vehicle;
 
+const int SCREEN_WIDTH = 600;
+const int SCREEN_HEIGHT = 600;
+
 void receive_data(int sock) {
     Vehicle received_data;
 
@@ -38,7 +41,7 @@ int main() {
     if (InitializeSDL() < 0) {
         return 1;
     }
-    window = CreateWindow("Traffic Simulator", 600, 600);
+    window = CreateWindow("Traffic Simulator", SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!window) {   
         return 1;
     }
