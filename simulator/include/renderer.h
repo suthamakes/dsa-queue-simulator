@@ -1,15 +1,27 @@
 #ifndef RENDERER_H
 #define RENDERER_H
-#define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 600
 
 #include <SDL2/SDL.h>
+
+typedef struct{
+    SDL_Rect rect;
+    int vehicle_id;
+    char road_id;
+    int lane;
+    int speed;
+    int targetX;
+    int targetY;
+} Vehicle;
+
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
+extern int LANE_WIDTH;
 
 int InitializeSDL(void);
 SDL_Window* CreateWindow(const char *title, int width, int height);
 SDL_Renderer* CreateRenderer(SDL_Window *window);
-void DrawDashedLine(SDL_Renderer *renderer, int x1, int y1, int x2, int y2, int dashLength);
 void DrawBackground(SDL_Renderer *renderer);
 
+void TrafficLightState(SDL_Renderer *renderer);
 
 #endif

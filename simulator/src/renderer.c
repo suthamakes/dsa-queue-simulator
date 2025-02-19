@@ -1,5 +1,9 @@
 #include "renderer.h"
 
+int SCREEN_WIDTH=600;
+int SCREEN_HEIGHT=600;
+int LANE_WIDTH=100;
+
 int InitializeSDL(void) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -69,10 +73,6 @@ void DrawTrafficLight(SDL_Renderer *renderer, int XPos, int YPos, int isGreen, c
     SDL_RenderFillRect(renderer, &trafficLightRect);
 }
 
-SDL_Color grassGreen = {34,139,34,255}; 
-SDL_Color roadGray = {50, 50, 50, 255};
-  
-
 void DrawLaneMarking(SDL_Renderer *renderer){
     SDL_Color laneMarking = {247, 233, 23, 255};
     
@@ -91,6 +91,9 @@ void DrawLaneMarking(SDL_Renderer *renderer){
 }
 
 void DrawBackground(SDL_Renderer *renderer) {
+    SDL_Color grassGreen = {34,139,34,255}; 
+    SDL_Color roadGray = {50, 50, 50, 255};
+
     // Set background color (green for grass)
     SDL_SetRenderDrawColor(renderer, grassGreen.r, grassGreen.g, grassGreen.b, grassGreen.a);
     SDL_RenderClear(renderer);
@@ -107,12 +110,13 @@ void DrawBackground(SDL_Renderer *renderer) {
     SDL_RenderFillRect(renderer, &verticalRoad);
     
     DrawLaneMarking(renderer);
+}
 
-    DrawTrafficLight(renderer, 175, 255, 0, "vertical");
+void TrafficLightState(SDL_Renderer *renderer){
+    DrawTrafficLight(renderer, 175, 255, 1, "vertical");
     DrawTrafficLight(renderer, 395, 255, 1, "vertical");
     DrawTrafficLight(renderer, 255, 175, 0, "horizontal");
     DrawTrafficLight(renderer, 255, 395, 1, "horizontal");
-
     SDL_RenderPresent(renderer);
     SDL_Delay(16); // Delay for ~60 FPS
 }
