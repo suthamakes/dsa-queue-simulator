@@ -118,3 +118,8 @@ void TrafficLightState(SDL_Renderer *renderer){
     DrawTrafficLight(renderer, 255, 175, 0, "horizontal");
     DrawTrafficLight(renderer, 255, 395, 1, "horizontal");
 }
+
+void drawVehicle(SDL_Renderer *renderer, Vehicle *vehicle) {
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red vehicle
+    SDL_RenderFillRect(renderer, &vehicle->rect);
+}
