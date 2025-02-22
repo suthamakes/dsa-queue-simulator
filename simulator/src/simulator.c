@@ -51,35 +51,37 @@ void getLaneCenter(char road, int lane, int *x, int *y) {
     *x = (lanePositions[roadIndex][laneIndex].x_start + lanePositions[roadIndex][laneIndex].x_end) / 2 - 20 / 2;
     *y = (lanePositions[roadIndex][laneIndex].y_start + lanePositions[roadIndex][laneIndex].y_end) / 2 - 20 / 2;
 
-    // Debugging output
-    printf("Vehicle starting at Road %c, Lane %d → Center (%d, %d)\n", road, lane, *x, *y);
 }
 
 void moveVehicle(Vehicle *vehicle) {
     int targetX, targetY;
     getLaneCenter(vehicle->targetRoad, vehicle->targetLane, &targetX, &targetY);
 
-    int reachedX = (abs(vehicle->rect.x - targetX) < vehicle->speed);
-    int reachedY = (abs(vehicle->rect.y - targetY) < vehicle->speed);
+    int reachedX = (abs(vehicle->rect.x - targetX) <= vehicle->speed);
+    int reachedY = (abs(vehicle->rect.y - targetY) <= vehicle->speed);
 
-    // Move right or left first
-    if (!reachedX) {
-        if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;
-        else vehicle->rect.x -= vehicle->speed;
-    } 
-    // Move up or down after reaching correct X position
-    else if (!reachedY) {
-        if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;
-        else vehicle->rect.y -= vehicle->speed;
+    if ((vehicle->road_id == 'A' && vehicle->targetRoad == 'C') || 
+        (vehicle->road_id == 'B' && vehicle->targetRoad == 'D')) {
+        // Move Y first (for A3 → C1 and B3 → D1)
+        if (!reachedY) {
+            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;  // Move down
+            else vehicle->rect.y -= vehicle->speed;  // Move up
+        } else if (!reachedX) {
+            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;  // Move right
+            else vehicle->rect.x -= vehicle->speed;  // Move left
+        }
+    } else {
+        // Default: Move X first (for D3 → A1 and C3 → B1)
+        if (!reachedX) {
+            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;  // Move right
+            else vehicle->rect.x -= vehicle->speed;  // Move left
+        } else if (!reachedY) {
+            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;  // Move down
+            else vehicle->rect.y -= vehicle->speed;  // Move up
+        }
     }
-
-    // Snap into position if very close
-    if (reachedX) vehicle->rect.x = targetX;
-    if (reachedY) vehicle->rect.y = targetY;
-
-    // Debugging output
-    printf("Vehicle %d Position: (%d, %d) Target: (%d, %d)\n", vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y, targetX, targetY);
 }
+
 
 
 
@@ -103,19 +105,31 @@ int main() {
 
     Vehicle vehicle1 = {
     {0, 0, 20, 20},  // Temporary position (updated below)
-    1, 'D', 3, 2,    // ID=1, starts at road 'D', lane 3, speed=3
-    'A', 1          // Target is road 'A', lane 1
+    1, 'B', 3, 2,    // ID=1, starts at road 'D', lane 3, speed=3
+    'D', 1          // Target is road 'A', lane 1
     };
     getLaneCenter(vehicle1.road_id, vehicle1.lane, &vehicle1.rect.x, &vehicle1.rect.y);
 
     Vehicle vehicle2 = {
-    {0, 0, 20, 20},  // Temporary values (updated below)
+    {600, 600, 20, 20},  // Temporary values (updated below)
     2, 'A', 3, 2,  // ID=2, starts at road 'A', lane 3
     'C', 1                     // Target is road 'C', lane 1
     };
-
-    // Set correct initial position (centered in A3)
     getLaneCenter(vehicle2.road_id, vehicle2.lane, &vehicle2.rect.x, &vehicle2.rect.y);
+
+    Vehicle vehicle3 = {
+    {0, 0, 20, 20},  // Temporary position (updated below)
+    1, 'C', 3, 2,    // ID=1, starts at road 'D', lane 3, speed=3
+    'B', 1          // Target is road 'A', lane 1
+    };
+    getLaneCenter(vehicle3.road_id, vehicle3.lane, &vehicle3.rect.x, &vehicle3.rect.y);
+
+    Vehicle vehicle4 = {
+    {600, 600, 20, 20},  // Temporary values (updated below)
+    2, 'D', 3, 2,  // ID=2, starts at road 'A', lane 3
+    'A', 1                     // Target is road 'C', lane 1
+    };
+    getLaneCenter(vehicle4.road_id, vehicle4.lane, &vehicle4.rect.x, &vehicle4.rect.y);
 
     int running = 1;
     SDL_Event event;
@@ -127,11 +141,15 @@ int main() {
         }
         moveVehicle(&vehicle1);
         moveVehicle(&vehicle2);
+        moveVehicle(&vehicle3);
+        moveVehicle(&vehicle4);
         
         DrawBackground(renderer);
         TrafficLightState(renderer);
         drawVehicle(renderer, &vehicle1);
         drawVehicle(renderer, &vehicle2);
+        drawVehicle(renderer, &vehicle3);
+        drawVehicle(renderer, &vehicle4);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(30);
