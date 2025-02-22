@@ -9,8 +9,8 @@ typedef struct{
     char road_id;
     int lane;
     int speed;
-    int targetX;
-    int targetY;
+    char targetRoad;
+    int targetLane; 
 } Vehicle;
 
 extern int SCREEN_WIDTH;
@@ -22,6 +22,7 @@ SDL_Window* CreateWindow(const char *title, int width, int height);
 SDL_Renderer* CreateRenderer(SDL_Window *window);
 void DrawBackground(SDL_Renderer *renderer);
 
+void drawVehicle(SDL_Renderer *renderer, Vehicle *vehicle);
 void TrafficLightState(SDL_Renderer *renderer);
 
 #endif
