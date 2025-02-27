@@ -146,3 +146,100 @@ void drawVehicle(SDL_Renderer *renderer, Vehicle *vehicle) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red vehicle
     SDL_RenderFillRect(renderer, &vehicle->rect);
 }
+
+typedef struct {
+        int x_start, x_end;
+        int y_start, y_end;
+    } LanePosition;
+
+LanePosition lanePositions[4][3] = {
+    // A road lanes (North to South) (A1, A2, A3)
+    // A2 is split into two - leftmost (outgoing), rightmost (incoming)
+    { {150, 250, -30, -30}, {270, 300, -30, -30}, {350, 450, -30, -30} },
+    
+    // B road lanes (South to North) (B1, B2, B3)
+    // B2 is split into two - leftmost (incoming), rightmost (outgoing)
+    { {350, 450, 630, 630}, {300, 330, 630, 630}, {150, 250, 630, 630} },
+    
+    // C road lanes (East to West) (C1, C2, C3)
+    // C2 is split into two - uppermost (outgoing), lowermost (incoming)
+    { {630, 630, 150, 250}, {630, 630, 270, 300}, {630, 630, 350, 450} },
+    
+    // D road lanes (West to East) (D1, D2, D3)
+    // D2 is split into two - uppermost (incoming), lowermost (outgoing)
+    { {-30, -30, 350, 450}, {-30, -30, 300, 330}, {-30, -30, 150, 250} }
+};
+
+void getLaneCenter(char road, int lane, int *x, int *y) {
+    int roadIndex = road - 'A';  // Convert 'A'-'D' to index 0-3
+    int laneIndex = lane - 1;    // Convert 1-3 to index 0-2
+
+    int middleLaneOffset = 0;
+    if (lane == 2) {
+        if (road == 'A') {
+            middleLaneOffset = -15; // Move left for outgoing
+        } else if (road == 'B') {
+            middleLaneOffset = 15;  // Move right for incoming
+        } else if (road == 'D') {
+            middleLaneOffset = 15;  // Move down for outgoing
+        } else if (road == 'C') {
+            middleLaneOffset = -15; // Move up for incoming
+        }
+    }
+
+    if (road == 'A' || road == 'B') {
+        *x = ((lanePositions[roadIndex][laneIndex].x_start + lanePositions[roadIndex][laneIndex].x_end) / 2) + middleLaneOffset;
+        *y = (road == 'A') ? -30 : SCREEN_HEIGHT + 10;
+    } else {
+        *x = (road == 'C') ? SCREEN_WIDTH + 10 : -30;
+        *y = ((lanePositions[roadIndex][laneIndex].y_start + lanePositions[roadIndex][laneIndex].y_end) / 2) + middleLaneOffset;
+    }
+
+    printf("Road: %c, Lane: %d, X: %d, Y: %d, Offset: %d\n", road, lane, *x, *y, middleLaneOffset);
+}
+
+void moveVehicle(Vehicle *vehicle) {
+    int targetX, targetY;
+    
+    // Set target positions beyond screen edges based on target road
+    if (vehicle->targetRoad == 'A') {
+        targetX = (lanePositions[0][vehicle->targetLane - 1].x_start + lanePositions[0][vehicle->targetLane - 1].x_end) / 2 - 20 / 2;
+        targetY = -30;  // Move beyond top edge
+    }
+    else if (vehicle->targetRoad == 'B') {
+        targetX = (lanePositions[1][vehicle->targetLane - 1].x_start + lanePositions[1][vehicle->targetLane - 1].x_end) / 2 - 20 / 2;
+        targetY = SCREEN_HEIGHT + 10;  // Move beyond bottom edge
+    }
+    else if (vehicle->targetRoad == 'C') {
+        targetX = SCREEN_WIDTH + 10;  // Move beyond right edge
+        targetY = (lanePositions[2][vehicle->targetLane - 1].y_start + lanePositions[2][vehicle->targetLane - 1].y_end) / 2 - 20 / 2;
+    }
+    else if (vehicle->targetRoad == 'D') {
+        targetX = -30;  // Move beyond left edge
+        targetY = (lanePositions[3][vehicle->targetLane - 1].y_start + lanePositions[3][vehicle->targetLane - 1].y_end) / 2 - 20 / 2;
+    }
+
+    int reachedX = (abs(vehicle->rect.x - targetX) <= vehicle->speed);
+    int reachedY = (abs(vehicle->rect.y - targetY) <= vehicle->speed);
+
+    if ((vehicle->road_id == 'A' && vehicle->targetRoad == 'C') || 
+        (vehicle->road_id == 'B' && vehicle->targetRoad == 'D')) {
+        // Move Y first (for A3 → C1 and B3 → D1)
+        if (!reachedY) {
+            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;
+            else vehicle->rect.y -= vehicle->speed;
+        } else if (!reachedX) {
+            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;
+            else vehicle->rect.x -= vehicle->speed;
+        }
+    } else {
+        // Default: Move X first (for D3 → A1 and C3 → B1)
+        if (!reachedX) {
+            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;
+            else vehicle->rect.x -= vehicle->speed;
+        } else if (!reachedY) {
+            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;
+            else vehicle->rect.y -= vehicle->speed;
+        }
+    }
+}

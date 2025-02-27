@@ -24,5 +24,7 @@ void DrawBackground(SDL_Renderer *renderer);
 
 void drawVehicle(SDL_Renderer *renderer, Vehicle *vehicle);
 void TrafficLightState(SDL_Renderer *renderer);
+void getLaneCenter(char road, int lane, int *x, int *y);
+void moveVehicle(Vehicle *vehicle);
 
 #endif
