@@ -200,46 +200,58 @@ void getLaneCenter(char road, int lane, int *x, int *y) {
 
 void moveVehicle(Vehicle *vehicle) {
     int targetX, targetY;
-    
-    // Set target positions beyond screen edges based on target road
-    if (vehicle->targetRoad == 'A') {
-        targetX = (lanePositions[0][vehicle->targetLane - 1].x_start + lanePositions[0][vehicle->targetLane - 1].x_end) / 2 - 20 / 2;
-        targetY = -30;  // Move beyond top edge
+    getLaneCenter(vehicle->targetRoad, vehicle->targetLane, &targetX, &targetY);
+
+    if (vehicle->targetLane == 1) {
+        if (!((vehicle->road_id == 'D' && vehicle->lane == 3 && vehicle->targetRoad == 'A') ||
+              (vehicle->road_id == 'A' && vehicle->lane == 3 && vehicle->targetRoad == 'C') ||
+              (vehicle->road_id == 'C' && vehicle->lane == 3 && vehicle->targetRoad == 'B') ||
+              (vehicle->road_id == 'B' && vehicle->lane == 3 && vehicle->targetRoad == 'D'))) {
+            printf("Vehicle %d is not allowed to move to Lane 1! Stopping movement.\n", vehicle->vehicle_id);
+            return;
+        }
     }
-    else if (vehicle->targetRoad == 'B') {
-        targetX = (lanePositions[1][vehicle->targetLane - 1].x_start + lanePositions[1][vehicle->targetLane - 1].x_end) / 2 - 20 / 2;
-        targetY = SCREEN_HEIGHT + 10;  // Move beyond bottom edge
-    }
-    else if (vehicle->targetRoad == 'C') {
-        targetX = SCREEN_WIDTH + 10;  // Move beyond right edge
-        targetY = (lanePositions[2][vehicle->targetLane - 1].y_start + lanePositions[2][vehicle->targetLane - 1].y_end) / 2 - 20 / 2;
-    }
-    else if (vehicle->targetRoad == 'D') {
-        targetX = -30;  // Move beyond left edge
-        targetY = (lanePositions[3][vehicle->targetLane - 1].y_start + lanePositions[3][vehicle->targetLane - 1].y_end) / 2 - 20 / 2;
+
+    if (vehicle->targetLane == 2) {
+        if (!((vehicle->road_id == 'A' && vehicle->lane == 2 && vehicle->targetRoad == 'B') ||
+              (vehicle->road_id == 'A' && vehicle->lane == 2 && vehicle->targetRoad == 'C') ||
+              (vehicle->road_id == 'C' && vehicle->lane == 2 && vehicle->targetRoad == 'A') ||
+              (vehicle->road_id == 'C' && vehicle->lane == 2 && vehicle->targetRoad == 'D') ||
+              (vehicle->road_id == 'B' && vehicle->lane == 2 && vehicle->targetRoad == 'A') ||
+              (vehicle->road_id == 'B' && vehicle->lane == 2 && vehicle->targetRoad == 'D') ||
+              (vehicle->road_id == 'D' && vehicle->lane == 2 && vehicle->targetRoad == 'C') ||
+              (vehicle->road_id == 'D' && vehicle->lane == 2 && vehicle->targetRoad == 'B'))) {
+            printf("Vehicle %d is not allowed to move to Lane 2! Stopping movement.\n", vehicle->vehicle_id);
+            return;
+        }
     }
 
     int reachedX = (abs(vehicle->rect.x - targetX) <= vehicle->speed);
     int reachedY = (abs(vehicle->rect.y - targetY) <= vehicle->speed);
 
+    // Prioritize movement direction based on road layout
     if ((vehicle->road_id == 'A' && vehicle->targetRoad == 'C') || 
         (vehicle->road_id == 'B' && vehicle->targetRoad == 'D')) {
-        // Move Y first (for A3 → C1 and B3 → D1)
+        // Move Y first
         if (!reachedY) {
-            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;
-            else vehicle->rect.y -= vehicle->speed;
+            vehicle->rect.y += (vehicle->rect.y < targetY) ? vehicle->speed : -vehicle->speed;
         } else if (!reachedX) {
-            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;
-            else vehicle->rect.x -= vehicle->speed;
+            vehicle->rect.x += (vehicle->rect.x < targetX) ? vehicle->speed : -vehicle->speed;
         }
     } else {
-        // Default: Move X first (for D3 → A1 and C3 → B1)
+        // Move X first
         if (!reachedX) {
-            if (vehicle->rect.x < targetX) vehicle->rect.x += vehicle->speed;
-            else vehicle->rect.x -= vehicle->speed;
+            vehicle->rect.x += (vehicle->rect.x < targetX) ? vehicle->speed : -vehicle->speed;
         } else if (!reachedY) {
-            if (vehicle->rect.y < targetY) vehicle->rect.y += vehicle->speed;
-            else vehicle->rect.y -= vehicle->speed;
+            vehicle->rect.y += (vehicle->rect.y < targetY) ? vehicle->speed : -vehicle->speed;
         }
     }
+
+    // Snap to target position
+    if (reachedX) vehicle->rect.x = targetX;
+    if (reachedY) vehicle->rect.y = targetY;
+
+    // Debugging Output
+    printf("Vehicle %d Position: (%d, %d) Target: (%d, %d)\n", 
+            vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y, targetX, targetY);
 }
