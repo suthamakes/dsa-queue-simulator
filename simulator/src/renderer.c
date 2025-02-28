@@ -202,9 +202,19 @@ void getLaneCenter(char road, int lane, int *x, int *y) {
     printf("Road: %c, Lane: %d, X: %d, Y: %d, Offset: %d\n", road, lane, *x, *y, middleLaneOffset);
 }
 
+Uint32 lastSwitchTime = 0;
 int northSouthGreen = 0;
 int eastWestGreen = 1;
 
+void updateTrafficLights() {
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - lastSwitchTime > 8555) {
+        northSouthGreen = !northSouthGreen;
+        eastWestGreen = !eastWestGreen;
+        lastSwitchTime = currentTime;
+        printf("Traffic Light Changed! North-South: %d, East-West: %d\n", northSouthGreen, eastWestGreen);
+    }
+}
 
 void moveVehicle(Vehicle *vehicle) {
     int targetX, targetY;

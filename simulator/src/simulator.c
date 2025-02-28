@@ -125,6 +125,9 @@ getLaneCenter(vehicle8.road_id, vehicle8.lane, &vehicle8.rect.x, &vehicle8.rect.
                 running = 0;
             }
         }
+
+        updateTrafficLights();
+
         moveVehicle(&vehicle1);
         moveVehicle(&vehicle2);
         moveVehicle(&vehicle3);
