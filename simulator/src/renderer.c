@@ -202,6 +202,10 @@ void getLaneCenter(char road, int lane, int *x, int *y) {
     printf("Road: %c, Lane: %d, X: %d, Y: %d, Offset: %d\n", road, lane, *x, *y, middleLaneOffset);
 }
 
+int northSouthGreen = 0;
+int eastWestGreen = 1;
+
+
 void moveVehicle(Vehicle *vehicle) {
     int targetX, targetY;
     getLaneCenter(vehicle->targetRoad, vehicle->targetLane, &targetX, &targetY);
@@ -229,6 +233,50 @@ void moveVehicle(Vehicle *vehicle) {
             return;
         }
     }
+  /* Vehicles Stopping Logic */
+  int shouldStop = 0;  
+  int stopX = vehicle->rect.x;  
+  int stopY = vehicle->rect.y;  
+
+  //For lane 2 only 
+  if(vehicle->lane == 2 ){
+    if(vehicle->road_id == 'A' && northSouthGreen){
+      stopY = 150 - 20;
+      if(vehicle->rect.y >= stopY){
+        shouldStop = 1;
+      }
+    }
+
+    if(vehicle->road_id == 'B' && northSouthGreen ){
+      stopY=450;
+      if(vehicle->rect.y <= stopY){
+        shouldStop = 1; 
+      }
+    }
+
+    if(vehicle->road_id == 'D' && eastWestGreen){
+      stopX=150-20; 
+      if(vehicle->rect.x >= stopX){
+        shouldStop = 1;
+      }
+    }
+
+    if(vehicle->road_id == 'C' && eastWestGreen){
+      stopX= 450; 
+      if(vehicle->rect.x <= stopX){
+        shouldStop = 1;
+      }
+    }
+  }
+
+  if(shouldStop){
+    vehicle->rect.x = stopX; 
+    vehicle->rect.y = stopY; 
+    printf("Vehicle %d stopped at (%d, %d) due to red light\n", 
+            vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y);
+        return;
+
+  }
 
     int reachedX = (abs(vehicle->rect.x - targetX) <= vehicle->speed);
     int reachedY = (abs(vehicle->rect.y - targetY) <= vehicle->speed);
@@ -255,6 +303,10 @@ void moveVehicle(Vehicle *vehicle) {
     if (reachedX) vehicle->rect.x = targetX;
     if (reachedY) vehicle->rect.y = targetY;
 
+    if (reachedX && reachedY) {
+        vehicle->road_id = vehicle->targetRoad;
+        vehicle->lane = vehicle->targetLane;
+    }
     // Debugging Output
     printf("Vehicle %d Position: (%d, %d) Target: (%d, %d)\n", 
             vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y, targetX, targetY);

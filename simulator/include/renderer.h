@@ -17,6 +17,9 @@ extern int SCREEN_WIDTH;
 extern int SCREEN_HEIGHT;
 extern int LANE_WIDTH;
 
+extern int northSouthGreen; 
+extern int eastWestGreen; 
+
 int InitializeSDL(void);
 SDL_Window* CreateWindow(const char *title, int width, int height);
 SDL_Renderer* CreateRenderer(SDL_Window *window);

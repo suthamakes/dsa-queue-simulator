@@ -135,8 +135,9 @@ getLaneCenter(vehicle8.road_id, vehicle8.lane, &vehicle8.rect.x, &vehicle8.rect.
         moveVehicle(&vehicle8);
         
         DrawBackground(renderer);
-        TrafficLightState(renderer, 1, 0);
-        // TrafficLightState(renderer, 0, 1);
+        
+        TrafficLightState(renderer,northSouthGreen,eastWestGreen); 
+
         drawVehicle(renderer, &vehicle1);
         drawVehicle(renderer, &vehicle2);
         drawVehicle(renderer, &vehicle3);
