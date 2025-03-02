@@ -1,7 +1,6 @@
 # dsa-queue-simulator
 A data structure and algorithms project implementing a queue-based traffic management system for a four-way intersection with priority lanes and free-turning lanes.
 
-![Traffic Junction Simulator Demo](demo.gif)
 ---
 The directory structure looks like this:
 ```    .
@@ -27,7 +26,7 @@ The directory structure looks like this:
             └── simulator.c
 ```
 
-#### How to run the project?
+### How to run the project?
 
 - Clone the project
 - Make sure you have installed the required dependencies
@@ -54,3 +53,5 @@ The directory structure looks like this:
     ./Generator
     ./Simulator
     ```
+### Demo
+![Traffic Junction Simulator Demo](demo.gif)
