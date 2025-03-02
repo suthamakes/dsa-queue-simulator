@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include <SDL2/SDL.h>
+#include <errno.h>
 
 typedef struct{
     SDL_Rect rect;

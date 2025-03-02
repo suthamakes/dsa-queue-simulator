@@ -9,11 +9,15 @@
 #define ROADS 4
 #define LANES 3
 
-typedef struct
-{
+typedef struct {
     int vehicle_id;
     char road_id;
     int lane;
+    int speed;
+    int rect_w;
+    int rect_h;
+    char targetRoad;
+    int targetLane;
 } Vehicle;
 
 void send_data(int socket_fd, Vehicle *data)
@@ -33,13 +37,28 @@ char getRandomRoad()
     return roads[rand() % ROADS];
 }
 
-Vehicle generate_vehicle()
-{
+Vehicle generate_vehicle() {
+    static int vehicle_counter = 0;
     Vehicle v;
-
-    v.vehicle_id = rand() % 100;
+    v.vehicle_id = ++vehicle_counter;
     v.road_id = getRandomRoad();
-    v.lane = rand() % LANES + 1;
+    v.lane = (rand() % 2) + 2;  // Lane 2 or 3
+    v.speed = 2;
+    v.rect_w = 20;
+    v.rect_h = 20;
+
+    if (v.lane == 2) {
+        if (v.road_id == 'A') v.targetRoad = 'B';
+        else if (v.road_id == 'B') v.targetRoad = 'A';
+        else if (v.road_id == 'C') v.targetRoad = 'D';
+        else if (v.road_id == 'D') v.targetRoad = 'C';
+    } else if (v.lane == 3) {
+        if (v.road_id == 'A') v.targetRoad = 'C';
+        else if (v.road_id == 'B') v.targetRoad = 'D';
+        else if (v.road_id == 'C') v.targetRoad = 'B';
+        else if (v.road_id == 'D') v.targetRoad = 'A';
+        v.targetLane = 1;
+    }
 
     return v;
 }

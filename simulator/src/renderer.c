@@ -243,51 +243,59 @@ void moveVehicle(Vehicle *vehicle) {
             return;
         }
     }
-  /* Vehicles Stopping Logic */
+   /*Vehicle Stopping Logic */
   int shouldStop = 0;  
   int stopX = vehicle->rect.x;  
   int stopY = vehicle->rect.y;  
 
+  //For lane 2 only  
+
   //For lane 2 only 
-  if(vehicle->lane == 2 ){
-    if(vehicle->road_id == 'A' && northSouthGreen){
+  if (vehicle->lane == 2) {
+    if (vehicle->road_id == 'A' && northSouthGreen) {
       stopY = 150 - 20;
-      if(vehicle->rect.y >= stopY){
+      if (vehicle->rect.y == stopY) {
         shouldStop = 1;
+      } else {
+        shouldStop =0;
       }
     }
 
-    if(vehicle->road_id == 'B' && northSouthGreen ){
-      stopY=450;
-      if(vehicle->rect.y <= stopY){
-        shouldStop = 1; 
+    if (vehicle->road_id == 'B' && northSouthGreen) {
+      stopY = 450;
+      if (vehicle->rect.y == stopY) {
+        shouldStop = 1;
+      }else{
+        shouldStop =0; 
       }
     }
 
-    if(vehicle->road_id == 'D' && eastWestGreen){
-      stopX=150-20; 
-      if(vehicle->rect.x >= stopX){
+    if (vehicle->road_id == 'D' && eastWestGreen) {
+      stopX = 150 - 20;
+      if (vehicle->rect.x == stopX) {
         shouldStop = 1;
+      }else{
+        shouldStop=0;
       }
     }
 
-    if(vehicle->road_id == 'C' && eastWestGreen){
-      stopX= 450; 
-      if(vehicle->rect.x <= stopX){
+    if (vehicle->road_id == 'C' && eastWestGreen) {
+      stopX = 450;
+      if (vehicle->rect.x == stopX) {
         shouldStop = 1;
+      }else{
+        shouldStop = 0;
       }
     }
   }
 
-  if(shouldStop){
-    vehicle->rect.x = stopX; 
-    vehicle->rect.y = stopY; 
-    printf("Vehicle %d stopped at (%d, %d) due to red light\n", 
-            vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y);
+    if (shouldStop) {
+        vehicle->rect.x = stopX;
+        vehicle->rect.y = stopY;
+        printf("Vehicle %d stopped at (%d, %d) due to red light\n",
+               vehicle->vehicle_id, vehicle->rect.x, vehicle->rect.y);
         return;
-
-  }
-
+    }
     int reachedX = (abs(vehicle->rect.x - targetX) <= vehicle->speed);
     int reachedY = (abs(vehicle->rect.y - targetY) <= vehicle->speed);
 
